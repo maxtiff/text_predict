@@ -1,11 +1,11 @@
 # sample.R
 sampler <- function () {
-#   rdata <- list('blogs.Rdata', 'news.Rdata', 'twitter.Rdata')
-#
-#   lapply(rdata,load)
-load("blogs.RData")
-load("news.RData")
-load("twitter.RData")
+  rdata <- list('blogs.Rdata', 'news.Rdata', 'twitter.Rdata')
+
+  lapply(rdata,load)
+#   load("blogs.RData")
+#   load("news.RData")
+#   load("twitter.RData")
 
   # sample data (100,000 of each)
   sample_blogs   <- sample(blogs, 1000)

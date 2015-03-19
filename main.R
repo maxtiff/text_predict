@@ -5,7 +5,7 @@ setwd("~/scripts/R/text_predict")
 library(stringi)
 
 ## Source scripts
-required.scripts <- c('get.R','load.R')
+required.scripts <- c('get.R','load.R','clean.R','sample.R')
 sapply(required.scripts, source, .GlobalEnv)
 
 ## Load required Libraries
@@ -24,4 +24,7 @@ for (i in files) {
 }
 
 ## Clean data
+clean()
 
+## Sample data
+sampler()

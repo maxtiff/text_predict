@@ -1,4 +1,5 @@
-# get.R
+##  get.R
+#   Download data from provided URL into a temporary location.
 download <- function(url) {
 
   temp <- tempfile(pattern="data",fileext=".zip")

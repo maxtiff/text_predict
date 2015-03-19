@@ -27,6 +27,5 @@ for (i in files) {
 ## Clean data
 clean()
 
-## Sample data
+## Combine data into sample
 sampler()
-

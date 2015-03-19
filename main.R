@@ -1,7 +1,10 @@
 # main.R
 setwd("~/scripts/R/text_predict")
 
-## Source all required scripts
+## Source libraries
+library(stringi)
+
+## Source scripts
 required.scripts <- c('get.R','load.R')
 sapply(required.scripts, source, .GlobalEnv)
 

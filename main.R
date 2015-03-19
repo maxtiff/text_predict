@@ -12,7 +12,7 @@ sapply(required.scripts, source, .GlobalEnv)
 url <- 'https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip'
 download(url)
 
-## Load data into environment
+## Load each data file into environment
 files <- c(list.files('./final/en_US'))
 
 for (i in files) {

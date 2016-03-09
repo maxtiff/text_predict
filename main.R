@@ -7,6 +7,7 @@ library(tm)
 library(RWeka)
 library(dplyr)
 library(magrittr)
+library(R.utils)
 
 ## Source scripts
 required.scripts  = c('get.R','load.R','clean.R','sample.R')
@@ -28,6 +29,7 @@ for (i in files) {
 max(nchar(blogs))
 max(nchar(news))
 max(nchar(twitter))
+countLines(twitter)
 love_count <- sum(grepl("love", twitter))
 hate_count <- sum(grepl("hate", twitter))
 love_count / hate_count

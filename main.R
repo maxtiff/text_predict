@@ -8,9 +8,6 @@ library(RWeka)
 library(dplyr)
 library(magrittr)
 library(R.utils)
-require(jsonlite)
-require(RJSONIO)
-require(rjson)
 require(foreach)
 require(doSNOW)
 require(wordcloud)
@@ -22,6 +19,17 @@ require(LDAvis)
 require(e1071)
 require(caret)
 require(ngram)
+library(RWekajars)
+library(qdapDictionaries)
+library(qdapRegex)
+library(qdapTools)
+library(qdap)
+library(NLP)
+library(SnowballC)
+library(rJava)
+library(wordcloud)
+library(stringr)
+library(googleVis)
 
 
 ## Source scripts
@@ -31,6 +39,8 @@ sapply(required.scripts, source, .GlobalEnv)
 ## Get and extract data from source
 # url  = 'https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip'
 # download(url)
+url <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+download.file(url)
 
 ## Load each data file into environment
 files = c(list.files('./final/en_US'))

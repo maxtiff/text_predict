@@ -10,6 +10,28 @@ output:
 ---
 
 # Introduction:
-The purpose of this milestone report is to indicate that I am sufficiently capable of handling large data sets within the R framework. The data set that I will use is a corpus of curated text from various blogs, news sites, and twitter posts, or 'tweets'. I will apply this data set to a text prediction algorithim which will be compiled into a Shiny application in the second half of the course.
+The purpose of this milestone report is to indicate that I am sufficiently capable of handling large data sets within the R framework. The data set that I will use is a corpora of curated text from various blogs, news sites, and twitter posts, or 'tweets'. I will apply this data set to a text prediction algorithim which will be compiled into a Shiny application in the second half of the course.
 
-The remaining sections of this report will explain how I download, extract, clean, and analyze the data required for the text prediction app which I will present at the end of the course.
+The remaining sections of this report will explain how I extract, clean, and analyze the data required for the text prediction app which I will present at the end of the course.
+
+# The Data:
+The HC Corpora is sourced as provided by the course instructors. The data is located at http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. More detailed information about the corpora at http://www.corpora.heliohost.org/aboutcorpus.html.
+
+
+## Data Processing
+The corpora is available in multiple languages, but for the purposes of this project I will only use the files in US English.
+
+### Download 
+```{r, eval=FALSE, echo=TRUE}
+fileURL <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+download.file(fileURL, destfile = "Dataset.zip", method = "curl")
+unlink(fileURL)
+unzip("Dataset.zip")
+```
+
+### Read into Environment 
+```{r, eval=FALSE, echo=FALSE}
+blogs <- readLines("./final/en_US/en_US.blogs.txt", encoding = "UTF-8", skipNul=TRUE)
+news <- readLines("./final/en_US/en_US.news.txt", encoding = "UTF-8", skipNul=TRUE)
+twitter <- readLines("./final/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul=TRUE)
+```

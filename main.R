@@ -36,7 +36,7 @@ sapply(required.scripts, source, .GlobalEnv)
 # url  = 'https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip'
 # download(url)
 url <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
-download.file(url)
+download(url)
 
 ## Load each data file into environment
 files = c(list.files('./final/en_US'))
@@ -120,7 +120,15 @@ twitter.corpus = tm_map(twitter.corpus, function(x) removeWords(x, stopwords("en
 twitter.corpus = tm_map(twitter.corpus, stemDocument)
 
 # Create word cloud
-c_tdm    = TermDocumentMatrix(myCorpus)
+vs.s = VectorSource(sample)
+s.corpus = VCorpus(vs.s)
+s.corpus = tm_map(s.corpus, content_transformer(tolower))
+s.corpus = tm_map(s.corpus, removePunctuation)
+s.corpus = tm_map(s.corpus, removeNumbers)
+s.corpus = tm_map(s.corpus, function(x) removeWords(x, stopwords("english")))
+s.corpus = tm_map(s.corpus, stemDocument)
+
+c_tdm    = TermDocumentMatrix(s.Corpus)
 c_tdm    = rollup(c_tdm, 2, na.rm=TRUE, FUN = sum)
 c_tdm.m  = as.matrix(c_tdm)
 c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)

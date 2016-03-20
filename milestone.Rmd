@@ -10,6 +10,7 @@ output:
 ---
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 library(RColorBrewer)
+library(RWeka)
 library(NLP)
 library(tm)
 library(SnowballC)
@@ -80,6 +81,8 @@ for (i in files) {
 }
 ```
 
+### Data Set Statistical Table
+
 ### Clean the data
 Next, I use regular expressions to clean out any unusual characters that may affect my analysis.
 ```{r,eval=TRUE, echo=TRUE}
@@ -125,9 +128,72 @@ c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)
 c_tdm.d  = data.frame(word = names(c_tdm.v),freq=c_tdm.v)
 ```
 
-#### Text Word Cloud
-```{r,eval=TRUE,echo=FALSE}
+```{r,eval=TRUE,echo=TRUE}
+c_tdm    = TermDocumentMatrix(s.corpus)
+c_tdm    = rollup(c_tdm, 2, na.rm=TRUE, FUN = sum)
+c_tdm.m  = as.matrix(c_tdm)
+c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)
+c_tdm.d  = data.frame(word = names(c_tdm.v),freq=c_tdm.v)
+table(c_tdm.d$freq)
 pal2 = brewer.pal(8,"Dark2")
-wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(8,.2),min.freq=500,
+wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(5,.3),min.freq=1000,
           max.words=Inf, random.order=FALSE, rot.per=.15, colors=pal2)
+```
+```{r, eval=FALSE, echo=FALSE}
+## Saving the final corpus
+saveRDS(s.corpus, file = "./finalCorpus.RDS")
+
+final.corpus <- readRDS("./finalCorpus.RDS")
+
+final.corpusDF <-data.frame(text=unlist(sapply(finalCorpus,`[`, "content")), 
+                           stringsAsFactors = FALSE)
+```
+
+
+## The N-Gram Tokenization
+
+In Natural Language Processing (NLP) an *n*-gram is a contiguous sequence of n items from a given sequence of text or speech.
+
+The following function is used to extract 1-grams, 2-grams and 2-grams from the cleaned text corpus.
+
+```{r, eval=FALSE, echo=TRUE}
+ngramTokenizer <- function(theCorpus, ngramCount) {
+        ngramFunction <- NGramTokenizer(theCorpus, 
+                                Weka_control(min = ngramCount, max = ngramCount, 
+                                delimiters = " \\r\\n\\t.,;:\"()?!"))
+        ngramFunction <- data.frame(table(ngramFunction))
+        ngramFunction <- ngramFunction[order(ngramFunction$Freq, 
+                                             decreasing = TRUE),][1:10,]
+        colnames(ngramFunction) <- c("String","Count")
+        ngramFunction
+}
+```
+
+By the usage of the tokenizer function for the *n*-grams a distribution of the following top 10 words and word combinations can be inspected. Unigrams are single words, while bigrams are two word combinations and trigrams are three word combinations.
+
+### Top Unigrams
+```{r, results="asis"}
+unigram <- readRDS("./unigram.RDS")
+unigramPlot <- gvisColumnChart(unigram, "String", "Count",                  
+                            options=list(legend="none"))
+
+print(unigramPlot, "chart")
+```
+
+### Top Bigrams
+```{r, results="asis"}
+bigram <- readRDS("./bigram.RDS")
+bigramPlot <- gvisColumnChart(bigram, "String", "Count",                  
+                            options=list(legend="none"))
+
+print(bigramPlot, "chart")
+```
+
+### Top Trigrams
+```{r, results="asis"}
+trigram <- readRDS("./trigram.RDS")
+trigramPlot <- gvisColumnChart(trigram, "String", "Count",                  
+                            options=list(legend="none"))
+
+print(trigramPlot, "chart")
 ```

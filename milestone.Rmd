@@ -1,0 +1,10 @@
+---
+title: "Coursera: Johns Hopkins Data Science Capstone - Milestone Report"
+author: "Travis May"
+output:
+  html_document:
+    highlight: textmate
+    keep_md: yes
+    theme: cosmo
+    toc: yes
+---

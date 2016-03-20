@@ -8,7 +8,30 @@ output:
     theme: cosmo
     toc: yes
 ---
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+library(RWekajars)
+library(qdapDictionaries)
+library(qdapRegex)
+library(qdapTools)
+library(RColorBrewer)
+library(qdap)
+library(NLP)
+library(tm)
+library(SnowballC)
+library(slam)
+library(RWeka)
+library(rJava)
+library(wordcloud)
+library(stringr)
+library(DT)
+library(stringi)
+library(googleVis)
+```
 
+```{r,eval=TRUE,echo=FALSE}
+required.scripts  = c('get.R','load.R','clean.R','sample.R')
+sapply(required.scripts, source, .GlobalEnv)
+```
 # Introduction:
 The purpose of this milestone report is to indicate that I am sufficiently capable of handling large data sets within the R framework. The data set that I will use is a corpora of curated text from various blogs, news sites, and twitter posts, or 'tweets'. I will apply this data set to a text prediction algorithim which will be compiled into a Shiny application in the second half of the course.
 
@@ -29,9 +52,46 @@ unlink(fileURL)
 unzip("Dataset.zip")
 ```
 
-### Read into Environment 
-```{r, eval=FALSE, echo=FALSE}
-blogs <- readLines("./final/en_US/en_US.blogs.txt", encoding = "UTF-8", skipNul=TRUE)
-news <- readLines("./final/en_US/en_US.news.txt", encoding = "UTF-8", skipNul=TRUE)
-twitter <- readLines("./final/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul=TRUE)
+### Read into Environment
+I use a custom function to read in the data iteratively.The function also converts the data from 'latin1' encoding to 'UTF-8'.
+```{r, eval=FALSE, echo=TRUE}
+loader <- function(item) {
+
+    if(tools::file_ext(item)=='txt') {
+
+      # Import 'News' data in binary mode
+      if(grepl('news',item)) {
+        con <- file(paste('./final/en_US/',item,sep = '/'),open='rb')
+        l <- readLines(con, encoding='UTF-8')
+        close(con)
+        rm(con)
+      }
+      # Import 'Twitter' and 'Blog' data in text mode
+      else {
+        l <- readLines(paste('./final/en_US/',item,sep = '/'),skipNul = TRUE,warn = FALSE, encoding = 'UTF-8')
+      }
+    }
+
+    return(l)
+}
 ```
+
+```{r, eval=TRUE, echo=TRUE}
+files = c(list.files('./final/en_US'))
+
+for (i in files) {
+  name = strsplit(i,"\\.")[[1]]
+  assign(name[[2]],loader(i))
+}
+```
+### Clean the data
+ I also use regular expressions to clean out any unusual characters that may affect my analysis.
+```{r,echo=FALSE}
+blogs <- stri_replace_all_regex(blogs, "\u2019|`","'")
+blogs <- stri_replace_all_regex(blogs, "\u201c|\u201d|u201f|``",'"')
+news <- stri_replace_all_regex(news, "\u2019|`","'")
+news <- stri_replace_all_regex(news, "\u201c|\u201d|u201f|``",'"')
+twitter <- stri_replace_all_regex(twitter, "\u2019|`","'")
+twitter <- stri_replace_all_regex(twitter, "\u201c|\u201d|u201f|``",'"')
+```
+

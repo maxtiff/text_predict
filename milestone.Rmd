@@ -81,7 +81,7 @@ for (i in files) {
 ```
 
 ### Clean the data
- Next, I use regular expressions to clean out any unusual characters that may affect my analysis.
+Next, I use regular expressions to clean out any unusual characters that may affect my analysis.
 ```{r,eval=TRUE, echo=TRUE}
 blogs <- iconv(blogs,from="latin1", to = "UTF-8", sub="")
 blogs <- stri_replace_all_regex(blogs, "\u2019|`","'")
@@ -107,7 +107,9 @@ writeLines(sample, "./sample.txt")
 ```
 
 
-```{r,eval=TRUE,echo=FALSE}
+### Tokenization
+I utilize the 'tm' package to transform the text, remove punctuation and stop words, and stem the document before loading the text into a matrix. This matrix is used to construct a word cloud.
+```{r,eval=TRUE,echo=TRUE}
 vs.s = VectorSource(sample)
 s.corpus = VCorpus(vs.s)
 s.corpus = tm_map(s.corpus, content_transformer(tolower))
@@ -122,12 +124,10 @@ c_tdm.m  = as.matrix(c_tdm)
 c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)
 c_tdm.d  = data.frame(word = names(c_tdm.v),freq=c_tdm.v)
 ```
-### Word Cloud
-```{r,eval=TRUE,echo=TRUE}
-table(c_tdm.d$freq)
+
+#### Text Word Cloud
+```{r,eval=TRUE,echo=FALSE}
 pal2 = brewer.pal(8,"Dark2")
-png("wordcloud_packages.png", width=1280,height=800)
-wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(8,.2),min.freq=1000,
+wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(8,.2),min.freq=500,
           max.words=Inf, random.order=FALSE, rot.per=.15, colors=pal2)
-dev.off()
 ```

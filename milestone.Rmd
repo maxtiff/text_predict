@@ -115,6 +115,16 @@ news_stats <- file.info("./final/en_US/en_US.news.txt")$size / 1024.0 / 1024.0
 twitter_stats <- file.info("./final/en_US/en_US.twitter.txt")$size / 1024.0 / 1024.0
 sample_stats <- file.info("./sample.txt")$size / 1024.0 / 1024.0
 
+blogsLength <- length(blogs)
+newsLength <- length(news)
+twitterLength <- length(twitter)
+sampleLength <- length(theSample)
+
+blogsWords <- sum(sapply(gregexpr("\\S+", blogs), length))
+newsWords <- sum(sapply(gregexpr("\\S+", news), length))
+twitterWords <- sum(sapply(gregexpr("\\S+", twitter), length))
+sampleWords <- sum(sapply(gregexpr("\\S+", sample), length))
+
 fileSummary <- data.frame(
         fileName = c("Blogs","News","Twitter", "Aggregated Sample"),
         fileSize = c(round(blog_stats, digits = 2), 
@@ -138,7 +148,7 @@ knitr::kable(head(fileSummaryDF, 10))
 ```
 
 ### Tokenization
-I utilize the 'tm' package to transform the text, remove punctuation and stop words, and stem the document before loading the text into a matrix. This matrix is used to construct a word cloud.
+Now that the data is in a more workable form, I utilize the 'tm' package to transform the text, remove punctuation and stop words, and stem the document before loading the text into a matrix. This matrix is used to construct a word cloud.
 ```{r,eval=TRUE,echo=TRUE}
 vs.s = VectorSource(sample)
 s.corpus = VCorpus(vs.s)

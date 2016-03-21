@@ -177,7 +177,7 @@ saveRDS(s.corpus, file = "./final_corpus.RDS")
 
 final.corpus <- readRDS("./final_corpus.RDS")
 
-final.corpusDF <-data.frame(text=unlist(sapply(finalCorpus,`[`, "content")), 
+final.corpusDF <-data.frame(text=unlist(sapply(final.corpus,`[`, "content")), 
                            stringsAsFactors = FALSE)
 ```
 
@@ -208,26 +208,50 @@ saveRDS(tri,file="./trigram.RDS")
 ### Top Unigrams
 ```{r, results="asis"}
 unigram <- readRDS("./unigram.RDS")
-unigramPlot <- gvisColumnChart(unigram, "String", "Count",                  
-                               options=list(legend="none"))
 
-print(unigramPlot, "chart")
+terms<- findFreqTerms(unigram, lowfreq = 75)
+terms <- rowSums(as.matrix(unigram[freqs,]))
+terms <- data.frame(trigram=names(freqs), frequency=freqs)
+
+g <- ggplot(terms, aes(x=reorder(unigram, frequency), y=frequency)) +
+    geom_bar(stat = "identity") +  coord_flip() +
+    theme(legend.title=element_blank()) +
+    xlab("Unigram") + ylab("Frequency") +
+    labs(title = "Top Unigrams by Frequency")
+print(g)
 ```
 
 ### Top Bigrams
 ```{r, results="asis"}
 bigram <- readRDS("./bigram.RDS")
-bigramPlot <- gvisColumnChart(bigram, "String", "Count",                  
-                              options=list(legend="none"))
 
-print(bigramPlot, "chart")
+terms<- findFreqTerms(bigram, lowfreq = 75)
+terms <- rowSums(as.matrix(bigram[freqs,]))
+terms <- data.frame(bigram=names(freqs), frequency=freqs)
+
+g <- ggplot(terms, aes(x=reorder(bigram, frequency), y=frequency)) +
+    geom_bar(stat = "identity") +  coord_flip() +
+    theme(legend.title=element_blank()) +
+    xlab("bigram") + ylab("Frequency") +
+    labs(title = "Top Bigrams by Frequency")
+print(g)
 ```
 
 ### Top Trigrams
 ```{r, results="asis"}
 trigram <- readRDS("./trigram.RDS")
-trigramPlot <- gvisColumnChart(trigram, "String", "Count",                  
-                               options=list(legend="none"))
 
-print(trigramPlot, "chart")
+terms<- findFreqTerms(trigram, lowfreq = 75)
+terms <- rowSums(as.matrix(trigram[freqs,]))
+terms <- data.frame(trigram=names(freqs), frequency=freqs)
+
+g <- ggplot(terms, aes(x=reorder(trigram, frequency), y=frequency)) +
+    geom_bar(stat = "identity") +  coord_flip() +
+    theme(legend.title=element_blank()) +
+    xlab("trigram") + ylab("Frequency") +
+    labs(title = "Top Trigrams by Frequency")
+print(g)
 ```
+
+## Conclusions:
+It is obvious that the data must be worked with efficiently for an alogrithim to work. The sample of and n-gram analysis are a step in the right direction.

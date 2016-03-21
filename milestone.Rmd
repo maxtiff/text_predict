@@ -171,7 +171,7 @@ wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(5,.3),min.freq=1000,
           max.words=Inf, random.order=FALSE, rot.per=.15, colors=pal2)
 ```
 
-```{r, eval=FALSE, echo=FALSE}
+```{r, eval=TRUE, echo=FALSE}
 ## Saving the final corpus
 saveRDS(s.corpus, file = "./final_corpus.RDS")
 
@@ -183,7 +183,7 @@ final.corpusDF <-data.frame(text=unlist(sapply(finalCorpus,`[`, "content")),
 
 ### N-Gram Analysis
 Since it is not very helplful to only look at single words when trying to predict text, I use N-gram analysis to get a better grasp of the way people use words. An n-gram is a contiguous sequence of 'n' items from a given text or in speech.
-```{r, eval=FALSE, echo=false}
+```{r, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE,}
 ngramTokenizer <- function(theCorpus, ngramCount) {
   ngramFunction <- NGramTokenizer(theCorpus, 
                                   Weka_control(min = ngramCount, max = ngramCount, 

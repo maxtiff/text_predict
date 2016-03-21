@@ -110,14 +110,14 @@ writeLines(sample, "./sample.txt")
 ### Data Set Summary tatistical Table
 Below is a table that gives a quick look at the data files compared with the sample data.
 ```{r,eval=TRUE,echo=FALSE}
-blog_stats <- './final/en_US/en_US.blogs.txt'
-news_stats <- './final/en_US/en_US.news.txt'
-twitter_stats <- './final/en_US/en_US.twitter.txt'
-sample_stats <- "./sample.txt"
+blog_stats <- file.info("./final/en_US/en_US.blogs.txt")$size / 1024.0 / 1024.0
+news_stats <- file.info("./final/en_US/en_US.news.txt")$size / 1024.0 / 1024.0
+twitter_stats <- file.info("./final/en_US/en_US.twitter.txt")$size / 1024.0 / 1024.0
+sample_stats <- file.info("./sample.txt")$size / 1024.0 / 1024.0
 
 fileSummary <- data.frame(
         fileName = c("Blogs","News","Twitter", "Aggregated Sample"),
-        fileSize = c(round(blogs_stats, digits = 2), 
+        fileSize = c(round(blog_stats, digits = 2), 
                      round(news_stats,digits = 2), 
                      round(twitter_stats, digits = 2),
                      round(sample_stats, digits = 2)),

@@ -18,7 +18,7 @@ library(slam)
 library(wordcloud)
 library(stringr)
 library(stringi)
-library(googleVis)
+library(ggplot2)
 ```
 
 ```{r results='hide',eval=TRUE,echo=FALSE}
@@ -139,12 +139,12 @@ colnames(fileSummary) <- c("File Name", "File Size (Mbs)", "Line Count", "Word C
 
 saveRDS(fileSummary, file = "./summary.Rda")
 
-fileSummaryDF <- readRDS("./summary.Rda")
+summary <- readRDS("./summary.Rda")
 
 ```
 
 ```{r,eval=TRUE,echo=TRUE}
-knitr::kable(head(fileSummaryDF, 10))
+knitr::kable(head(summary, 10))
 ```
 
 ### Tokenization
@@ -195,27 +195,15 @@ ngramTokenizer <- function(theCorpus, ngramCount) {
   ngramFunction
 }
 
-uni <- ngramTokenizer(final.corpusDF,1)
-bi <- ngramTokenizer(final.corpusDF,2)
-tri <- ngramTokenizer(final.corpusDF,3)
-
-saveRDS(uni,file="./unigram.RDS")
-saveRDS(bi,file="./bigram.RDS")
-saveRDS(tri,file="./trigram.RDS")
+uni.m <- ngramTokenizer(final.corpusDF,1)
+bi.m<- ngramTokenizer(final.corpusDF,2)
+tri.m<- ngramTokenizer(final.corpusDF,3)
 ```
 
 
 ### Top Unigrams
-```{r, eval=TRUE,echo=false"}
-unigram <- readRDS("./unigram.RDS")
-
-freqterms<- findFreqTerms(unigram, lowfreq = 75)
-terms <- rowSums(as.matrix(unigram[freqterms,]))
-terms <- data.frame(unigram=names(terms), frequency=terms)
-```
-
 ```{r,eval=TRUE,echo=TRUE}
-g <- ggplot(terms, aes(x=reorder(unigram, frequency), y=frequency)) +
+g <- ggplot(uni.m, aes(x=reorder(String, Count), y=Count)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("Unigram") + ylab("Frequency") +
@@ -224,16 +212,8 @@ print(g)
 ```
 
 ### Top Bigrams
-```{r, eval=TRUE,echo=false"}
-bigram <- readRDS("./bigram.RDS")
-
-freqterms<- findFreqTerms(bigram, lowfreq = 75)
-terms <- rowSums(as.matrix(bigram[freqterms,]))
-terms <- data.frame(bigram=names(terms), frequency=terms)
-```
-
 ```{r,eval=TRUE,echo=TRUE}
-g <- ggplot(terms, aes(x=reorder(bigram, frequency), y=frequency)) +
+g <- ggplot(bi.m, aes(x=reorder(String, Count), y=Count)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("bigram") + ylab("Frequency") +
@@ -242,16 +222,8 @@ print(g)
 ```
 
 ### Top Trigrams
-```{r, eval=TRUE,echo=false"}
-trigram <- readRDS("./trigram.RDS")
-
-freqterms<- findFreqTerms(trigram, lowfreq = 75)
-terms <- rowSums(as.matrix(trigram[freqterms,]))
-terms <- data.frame(trigram=names(terms), frequency=terms)
-```
-
 ```{r,eval=TRUE,echo=TRUE}
-g <- ggplot(terms, aes(x=reorder(trigram, frequency), y=frequency)) +
+g <- ggplot(tri.m, aes(x=reorder(String, Count), y=Count)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("trigram") + ylab("Frequency") +
@@ -260,4 +232,4 @@ print(g)
 ```
 
 ## Conclusions:
-It is obvious that the data must be worked with efficiently for an alogrithim to work. The sample of and n-gram analysis are a step in the right direction.
+It is obvious that the data must be worked with efficiently for an alogrithim to work. Further, correctly stemming the document will provide better results. Sampling the data and n-gram analysis are a step in the right direction.

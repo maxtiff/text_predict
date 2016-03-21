@@ -118,7 +118,7 @@ sample_stats <- file.info("./sample.txt")$size / 1024.0 / 1024.0
 blogsLength <- length(blogs)
 newsLength <- length(news)
 twitterLength <- length(twitter)
-sampleLength <- length(theSample)
+sampleLength <- length(sample)
 
 blogsWords <- sum(sapply(gregexpr("\\S+", blogs), length))
 newsWords <- sum(sapply(gregexpr("\\S+", news), length))
@@ -135,11 +135,11 @@ fileSummary <- data.frame(
         wordCount = c(blogsWords, newsWords, twitterWords, sampleLength)                
 )
 
-colnames(fileSummary) <- c("File Name", "File Size in Megabyte", "Line Count", "Word Count")
+colnames(fileSummary) <- c("File Name", "File Size (Mbs)", "Line Count", "Word Count")
 
 saveRDS(fileSummary, file = "./summary.Rda")
 
-fileSummaryDF <- readRDS("./fileSummary.Rda")
+fileSummaryDF <- readRDS("./summary.Rda")
 
 ```
 
@@ -157,21 +157,15 @@ s.corpus = tm_map(s.corpus, removePunctuation)
 s.corpus = tm_map(s.corpus, removeNumbers)
 s.corpus = tm_map(s.corpus, function(x) removeWords(x, stopwords("english")))
 s.corpus = tm_map(s.corpus, stemDocument)
-
-c_tdm    = TermDocumentMatrix(s.corpus)
-c_tdm    = rollup(c_tdm, 2, na.rm=TRUE, FUN = sum)
-c_tdm.m  = as.matrix(c_tdm)
-c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)
-c_tdm.d  = data.frame(word = names(c_tdm.v),freq=c_tdm.v)
 ```
 
+#### A visualization of common single words:
 ```{r,eval=TRUE,echo=TRUE}
 c_tdm    = TermDocumentMatrix(s.corpus)
 c_tdm    = rollup(c_tdm, 2, na.rm=TRUE, FUN = sum)
 c_tdm.m  = as.matrix(c_tdm)
 c_tdm.v  = sort(rowSums(c_tdm.m),decreasing=TRUE)
 c_tdm.d  = data.frame(word = names(c_tdm.v),freq=c_tdm.v)
-table(c_tdm.d$freq)
 pal2 = brewer.pal(8,"Dark2")
 wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(5,.3),min.freq=1000,
           max.words=Inf, random.order=FALSE, rot.per=.15, colors=pal2)
@@ -179,11 +173,61 @@ wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(5,.3),min.freq=1000,
 
 ```{r, eval=FALSE, echo=FALSE}
 ## Saving the final corpus
-saveRDS(s.corpus, file = "./finalCorpus.RDS")
+saveRDS(s.corpus, file = "./final_corpus.RDS")
 
-final.corpus <- readRDS("./finalCorpus.RDS")
+final.corpus <- readRDS("./final_corpus.RDS")
 
 final.corpusDF <-data.frame(text=unlist(sapply(finalCorpus,`[`, "content")), 
                            stringsAsFactors = FALSE)
 ```
 
+### N-Gram Analysis
+Since it is not very helplful to only look at single words when trying to predict text, I use N-gram analysis to get a better grasp of the way people use words. An n-gram is a contiguous sequence of 'n' items from a given text or in speech.
+```{r, eval=FALSE, echo=false}
+ngramTokenizer <- function(theCorpus, ngramCount) {
+  ngramFunction <- NGramTokenizer(theCorpus, 
+                                  Weka_control(min = ngramCount, max = ngramCount, 
+                                               delimiters = " \\r\\n\\t.,;:\"()?!"))
+  ngramFunction <- data.frame(table(ngramFunction))
+  ngramFunction <- ngramFunction[order(ngramFunction$Freq, 
+                                       decreasing = TRUE),][1:10,]
+  colnames(ngramFunction) <- c("String","Count")
+  ngramFunction
+}
+
+uni <- ngramTokenizer(final.corpusDF,1)
+bi <- ngramTokenizer(final.corpusDF,2)
+tri <- ngramTokenizer(final.corpusDF,3)
+
+saveRDS(uni,file="./unigram.RDS")
+saveRDS(bi,file="./bigram.RDS")
+saveRDS(tri,file="./trigram.RDS")
+```
+
+
+### Top Unigrams
+```{r, results="asis"}
+unigram <- readRDS("./unigram.RDS")
+unigramPlot <- gvisColumnChart(unigram, "String", "Count",                  
+                               options=list(legend="none"))
+
+print(unigramPlot, "chart")
+```
+
+### Top Bigrams
+```{r, results="asis"}
+bigram <- readRDS("./bigram.RDS")
+bigramPlot <- gvisColumnChart(bigram, "String", "Count",                  
+                              options=list(legend="none"))
+
+print(bigramPlot, "chart")
+```
+
+### Top Trigrams
+```{r, results="asis"}
+trigram <- readRDS("./trigram.RDS")
+trigramPlot <- gvisColumnChart(trigram, "String", "Count",                  
+                               options=list(legend="none"))
+
+print(trigramPlot, "chart")
+```

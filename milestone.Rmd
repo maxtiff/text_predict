@@ -206,13 +206,15 @@ saveRDS(tri,file="./trigram.RDS")
 
 
 ### Top Unigrams
-```{r, results="asis"}
+```{r, eval=TRUE,echo=false"}
 unigram <- readRDS("./unigram.RDS")
 
-terms<- findFreqTerms(unigram, lowfreq = 75)
-terms <- rowSums(as.matrix(unigram[freqs,]))
-terms <- data.frame(trigram=names(freqs), frequency=freqs)
+freqterms<- findFreqTerms(unigram, lowfreq = 75)
+terms <- rowSums(as.matrix(unigram[freqterms,]))
+terms <- data.frame(unigram=names(terms), frequency=terms)
+```
 
+```{r,eval=TRUE,echo=TRUE}
 g <- ggplot(terms, aes(x=reorder(unigram, frequency), y=frequency)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +
@@ -222,13 +224,15 @@ print(g)
 ```
 
 ### Top Bigrams
-```{r, results="asis"}
+```{r, eval=TRUE,echo=false"}
 bigram <- readRDS("./bigram.RDS")
 
-terms<- findFreqTerms(bigram, lowfreq = 75)
-terms <- rowSums(as.matrix(bigram[freqs,]))
-terms <- data.frame(bigram=names(freqs), frequency=freqs)
+freqterms<- findFreqTerms(bigram, lowfreq = 75)
+terms <- rowSums(as.matrix(bigram[freqterms,]))
+terms <- data.frame(bigram=names(terms), frequency=terms)
+```
 
+```{r,eval=TRUE,echo=TRUE}
 g <- ggplot(terms, aes(x=reorder(bigram, frequency), y=frequency)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +
@@ -238,13 +242,15 @@ print(g)
 ```
 
 ### Top Trigrams
-```{r, results="asis"}
+```{r, eval=TRUE,echo=false"}
 trigram <- readRDS("./trigram.RDS")
 
-terms<- findFreqTerms(trigram, lowfreq = 75)
-terms <- rowSums(as.matrix(trigram[freqs,]))
-terms <- data.frame(trigram=names(freqs), frequency=freqs)
+freqterms<- findFreqTerms(trigram, lowfreq = 75)
+terms <- rowSums(as.matrix(trigram[freqterms,]))
+terms <- data.frame(trigram=names(terms), frequency=terms)
+```
 
+```{r,eval=TRUE,echo=TRUE}
 g <- ggplot(terms, aes(x=reorder(trigram, frequency), y=frequency)) +
     geom_bar(stat = "identity") +  coord_flip() +
     theme(legend.title=element_blank()) +

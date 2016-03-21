@@ -81,8 +81,6 @@ for (i in files) {
 }
 ```
 
-### Data Set Statistical Table
-
 ### Clean the data
 Next, I use regular expressions to clean out any unusual characters that may affect my analysis.
 ```{r,eval=TRUE, echo=TRUE}
@@ -98,7 +96,7 @@ twitter <- stri_replace_all_regex(twitter, "\u201c|\u201d|u201f|``",'"')
 ```
 
 ### Sample the data
-I samples 10000 lines from each set of text. I save the file for later.
+Since the data is so large, I sample 10000 lines from each set of text and I save the file for later.
 ```{r,eval=TRUE,echo=TRUE}
 sample_blogs   <- sample(blogs, 10000)
 sample_news    <- sample(news, 10000)
@@ -109,6 +107,35 @@ sample <- c(sample_twitter,sample_news,sample_blogs)
 writeLines(sample, "./sample.txt")
 ```
 
+### Data Set Summary tatistical Table
+Below is a table that gives a quick look at the data files compared with the sample data.
+```{r,eval=TRUE,echo=FALSE}
+blog_stats <- './final/en_US/en_US.blogs.txt'
+news_stats <- './final/en_US/en_US.news.txt'
+twitter_stats <- './final/en_US/en_US.twitter.txt'
+sample_stats <- "./sample.txt"
+
+fileSummary <- data.frame(
+        fileName = c("Blogs","News","Twitter", "Aggregated Sample"),
+        fileSize = c(round(blogs_stats, digits = 2), 
+                     round(news_stats,digits = 2), 
+                     round(twitter_stats, digits = 2),
+                     round(sample_stats, digits = 2)),
+        lineCount = c(blogsLength, newsLength, twitterLength, sampleLength),
+        wordCount = c(blogsWords, newsWords, twitterWords, sampleLength)                
+)
+
+colnames(fileSummary) <- c("File Name", "File Size in Megabyte", "Line Count", "Word Count")
+
+saveRDS(fileSummary, file = "./summary.Rda")
+
+fileSummaryDF <- readRDS("./fileSummary.Rda")
+
+```
+
+```{r,eval=TRUE,echo=TRUE}
+knitr::kable(head(fileSummaryDF, 10))
+```
 
 ### Tokenization
 I utilize the 'tm' package to transform the text, remove punctuation and stop words, and stem the document before loading the text into a matrix. This matrix is used to construct a word cloud.
@@ -139,6 +166,7 @@ pal2 = brewer.pal(8,"Dark2")
 wordcloud(c_tdm.d$word,c_tdm.d$freq, scale=c(5,.3),min.freq=1000,
           max.words=Inf, random.order=FALSE, rot.per=.15, colors=pal2)
 ```
+
 ```{r, eval=FALSE, echo=FALSE}
 ## Saving the final corpus
 saveRDS(s.corpus, file = "./finalCorpus.RDS")
@@ -149,51 +177,3 @@ final.corpusDF <-data.frame(text=unlist(sapply(finalCorpus,`[`, "content")),
                            stringsAsFactors = FALSE)
 ```
 
-
-## The N-Gram Tokenization
-
-In Natural Language Processing (NLP) an *n*-gram is a contiguous sequence of n items from a given sequence of text or speech.
-
-The following function is used to extract 1-grams, 2-grams and 2-grams from the cleaned text corpus.
-
-```{r, eval=FALSE, echo=TRUE}
-ngramTokenizer <- function(theCorpus, ngramCount) {
-        ngramFunction <- NGramTokenizer(theCorpus, 
-                                Weka_control(min = ngramCount, max = ngramCount, 
-                                delimiters = " \\r\\n\\t.,;:\"()?!"))
-        ngramFunction <- data.frame(table(ngramFunction))
-        ngramFunction <- ngramFunction[order(ngramFunction$Freq, 
-                                             decreasing = TRUE),][1:10,]
-        colnames(ngramFunction) <- c("String","Count")
-        ngramFunction
-}
-```
-
-By the usage of the tokenizer function for the *n*-grams a distribution of the following top 10 words and word combinations can be inspected. Unigrams are single words, while bigrams are two word combinations and trigrams are three word combinations.
-
-### Top Unigrams
-```{r, results="asis"}
-unigram <- readRDS("./unigram.RDS")
-unigramPlot <- gvisColumnChart(unigram, "String", "Count",                  
-                            options=list(legend="none"))
-
-print(unigramPlot, "chart")
-```
-
-### Top Bigrams
-```{r, results="asis"}
-bigram <- readRDS("./bigram.RDS")
-bigramPlot <- gvisColumnChart(bigram, "String", "Count",                  
-                            options=list(legend="none"))
-
-print(bigramPlot, "chart")
-```
-
-### Top Trigrams
-```{r, results="asis"}
-trigram <- readRDS("./trigram.RDS")
-trigramPlot <- gvisColumnChart(trigram, "String", "Count",                  
-                            options=list(legend="none"))
-
-print(trigramPlot, "chart")
-```

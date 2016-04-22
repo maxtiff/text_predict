@@ -6,19 +6,8 @@ suppressPackageStartupMessages(c(
         library(markdown),
         library(stylo)))
 
-shinyUI(navbarPage("Coursera Data Science Capstone", 
-                   
-                   theme = shinytheme("flatly"),
-                   
-############################### ~~~~~~~~1~~~~~~~~ ##############################  
-## Tab 1 - Prediction
-
-tabPanel("Next Word Prediction",
-         
-         tags$head(includeScript("./js/ga-shinyapps-io.js")),
-         
-         fluidRow(
-                 
+shinyUI(fluidPage("Coursera Data Science Capstone",theme = shinytheme("flatly"),titlePanel("Text Prediction")
+         fluidRow(                 
                  column(3),
                  column(6,
                         tags$div(textInput("text", 

@@ -1,11 +1,3 @@
-suppressPackageStartupMessages(c(
-        library(shinythemes),
-        library(shiny),
-        library(tm),
-        library(stringr),
-        library(markdown),
-        library(stylo)))
-
 shinyUI(fluidPage("Coursera Data Science Capstone",theme = shinytheme("flatly"),titlePanel("Text Prediction")
          fluidRow(                 
                  column(3),
